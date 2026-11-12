@@ -1,0 +1,15 @@
+## Interface: 16001
+## Title: Forever |cff009246Ita|cffffffffli|cffce2b37ano|r
+## Notes: Traduzione amatoriale in italiano di WoW Forever: missioni, dialoghi e libri. Tieni premuto Alt per vedere il testo inglese.
+## Author: alelimpo e la comunità
+## Version: 0.1.0
+## SavedVariables: ForeverItalianoDB
+## X-License: MIT
+## X-Website: https://github.com/alelimpo/wow-forever-italiano
+
+Core.lua
+Esporta.lua
+
+# DATI-INIZIO (questa sezione è generata da tools/costruisci.py)
+Dati\Dati01.lua
+# DATI-FINE

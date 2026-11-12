@@ -1,0 +1,7 @@
+{
+ "host": "http://localhost:11434",
+ "modello": "qwen2.5:7b",
+ "temperatura": 0.2,
+ "tentativi": 3,
+ "timeout": 300
+}

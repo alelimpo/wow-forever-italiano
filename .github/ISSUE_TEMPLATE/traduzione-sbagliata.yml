@@ -1,0 +1,29 @@
+name: Traduzione sbagliata
+description: Segnala una traduzione errata o poco naturale.
+title: "Traduzione da correggere: "
+labels: ["traduzione-sbagliata"]
+body:
+  - type: textarea
+    id: inglese
+    attributes:
+      label: Testo inglese
+      description: Tieni premuto Alt in gioco per vedere l'originale e copialo qui (anche solo la frase interessata).
+    validations:
+      required: true
+  - type: textarea
+    id: attuale
+    attributes:
+      label: Traduzione attuale
+    validations:
+      required: false
+  - type: textarea
+    id: proposta
+    attributes:
+      label: Come la tradurresti
+    validations:
+      required: true
+  - type: input
+    id: dove
+    attributes:
+      label: Dove l'hai vista
+      description: Per esempio il nome della missione o del personaggio.

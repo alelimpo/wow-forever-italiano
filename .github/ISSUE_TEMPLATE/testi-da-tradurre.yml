@@ -1,0 +1,23 @@
+name: Testi da tradurre
+description: Invia i testi che l'add-on ha trovato senza traduzione. Vengono importati in automatico.
+title: "Testi da tradurre"
+labels: ["testi-da-tradurre"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Grazie per l'aiuto! Due modi per ottenere il testo da incollare:
+
+        **In gioco:** scrivi `/fit esporta`, premi **Ctrl+A** e poi **Ctrl+C**.
+
+        **Dal PC:** esci dal gioco (o scrivi `/reload`) e lancia `python tools/invia_testi.py`: copia il testo negli appunti da solo.
+
+        I testi contengono solo scritte del gioco (missioni, dialoghi, libri): il nome del tuo personaggio è già stato sostituito con `$N`.
+  - type: textarea
+    id: testi
+    attributes:
+      label: Testi esportati
+      description: Incolla tutto, comprese le righe che iniziano con FIT1 ed E.
+      render: text
+    validations:
+      required: true

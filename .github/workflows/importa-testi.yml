@@ -1,0 +1,67 @@
+name: Importa i testi inviati dai giocatori
+
+# Quando qualcuno compila il modulo "Testi da tradurre", questo flusso salva i testi nuovi
+# in data/in_arrivo/issue-N.json, risponde nell'issue e la chiude.
+# I giocatori inviano solo testi inglesi: le traduzioni le genera sempre il progetto,
+# quindi nessuno può inserire traduzioni sbagliate apposta.
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: importa-testi
+  cancel-in-progress: false
+
+jobs:
+  importa:
+    if: contains(github.event.issue.labels.*.name, 'testi-da-tradurre') && !contains(github.event.issue.labels.*.name, 'importato')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Leggi i testi dell'issue
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          NUMERO: ${{ github.event.issue.number }}
+        run: |
+          python tools/importa.py --da-issue \
+            --uscita "data/in_arrivo/issue-${NUMERO}.json" \
+            --riepilogo riepilogo.txt
+
+      - name: Salva nel progetto
+        env:
+          NUMERO: ${{ github.event.issue.number }}
+        run: |
+          if [ ! -f "data/in_arrivo/issue-${NUMERO}.json" ]; then
+            echo "Nessun testo nuovo."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "data/in_arrivo/issue-${NUMERO}.json"
+          git diff --cached --quiet && exit 0
+          git commit -m "Testi da tradurre dall'issue #${NUMERO}"
+          for tentativo in 1 2 3; do
+            git pull --rebase && git push && exit 0
+            sleep 5
+          done
+          exit 1
+
+      - name: Rispondi e chiudi l'issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NUMERO: ${{ github.event.issue.number }}
+        run: |
+          gh label create importato --color 0e8a16 --description "Testi già importati" 2>/dev/null || true
+          gh issue comment "$NUMERO" --body-file riepilogo.txt
+          gh issue edit "$NUMERO" --add-label importato
+          gh issue close "$NUMERO"

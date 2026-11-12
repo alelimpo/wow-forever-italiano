@@ -1,0 +1,36 @@
+name: Pubblica una versione
+
+# Parte quando viene creato un tag come v0.1.1 (lo fa tools/aggiorna.ps1 -Rilascia)
+# e prepara lo zip dell'add-on da scaricare.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  rilascio:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Crea lo zip
+        run: |
+          cd addon
+          zip -r "../ForeverItaliano-${GITHUB_REF_NAME}.zip" ForeverItaliano
+
+      - name: Pubblica
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          NUM=$(cat addon/ForeverItaliano/Dati/*.lua | grep -c '^T\[' || true)
+          cat > note.md <<EOF
+          Traduzioni incluse: ${NUM}.
+
+          **Installazione:** scarica lo zip qui sotto, estrai la cartella \`ForeverItaliano\` dentro
+          \`World of Warcraft\\_forever_\\Interface\\AddOns\` e riavvia il gioco.
+          EOF
+          gh release create "$GITHUB_REF_NAME" "ForeverItaliano-${GITHUB_REF_NAME}.zip" \
+            --title "Forever Italiano ${GITHUB_REF_NAME}" --notes-file note.md
